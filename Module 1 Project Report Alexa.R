@@ -20,7 +20,7 @@ for(i in species){
     ggplot()+geom_boxplot(aes(x=quadrant,y=N))+ggtitle(i)
   print(p)
 }
-pdf("species.quadrant.pdf")
+pdf("species.quadrant.alexa.pdf")
 for(i in species){
   p <- dat %>%
     filter(species==i)%>%
