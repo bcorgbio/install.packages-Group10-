@@ -1,7 +1,7 @@
 library(ggplot2)
 library(tidyverse)
 dat<-read.csv("scales.csv")
-dim(dat)
+dim(dat) 
 sapply(dat,class)
 dat$species <- as.factor(dat$species)
 species <- levels(dat$species)
