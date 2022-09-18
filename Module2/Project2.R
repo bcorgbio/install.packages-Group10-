@@ -4,7 +4,6 @@
 library(ggplot2)
 library(tidyverse)
 library(features)
-setwd("~/Desktop/Group Project/Project2/")
 
 
 #Data Setup
