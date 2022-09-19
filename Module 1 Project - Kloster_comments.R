@@ -7,7 +7,7 @@ setwd("~jackkloster/Desktop/install.packages-Group10-/scales")
 dat <- read.csv("scales.csv")
 dim(dat)
 sapply(dat,class)
-species.n<- dat %>%
+species.n<- dat %>% 
   group_by(species) %>%
   summarise(n = n())
 species.n

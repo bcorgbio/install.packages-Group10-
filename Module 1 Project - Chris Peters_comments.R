@@ -7,7 +7,7 @@ dat <- read.csv("scales.csv")
 
 dim(dat)
 head(dat)
-
+ 
 sapply(dat,class) #does lines 10-13 at once
 
 dat$species <- as.factor(dat$species)

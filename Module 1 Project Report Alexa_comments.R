@@ -27,7 +27,7 @@ for(i in species){
     filter(species==i)%>%
     ggplot()+geom_boxplot(aes(x=quadrant,y=N))+ggtitle(i)
   print(p)
-}
+} 
 dev.off()
 
 #CPK: this is unneeded VVV
