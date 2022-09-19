@@ -1,7 +1,8 @@
 library(ggplot2)
 library(tidyverse)
 
-setwd("~/Desktop/Group Project/Project1")
+#setwd("~/Desktop/Group Project/Project1")
+#commented out ^
 dat <- read.csv("scales.csv")
 
 dim(dat)
