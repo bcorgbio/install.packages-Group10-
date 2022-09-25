@@ -16,7 +16,7 @@ library(MuMIn)
 anole<-read_csv("anole.dat.csv")
 anole.eco<-read_csv("anole.eco.csv")
 
-#Merge the anole data tibble with the anole.eco tibble
+#1 - Establishing the anole.log data tibble
 anole2 <- anole%>%
   left_join(anole.eco)%>%
   filter(!Ecomorph%in%c("U","CH"))%>%
