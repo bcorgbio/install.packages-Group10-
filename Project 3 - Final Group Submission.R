@@ -99,8 +99,7 @@ anole.log <- anole.log %>%
   
 anole.log%>%
   dplyr::select(phylo.residual,Ecomorph2, resPH,resPD)%>%
-  pivot_longer(cols=c("resPH","resPD"))%>%
-  print%>%
+  pivot_longer(cols=c("phylo.residual","resPH","resPD"))%>%
   ggplot(aes(x = Ecomorph2,y = value)) + 
   geom_boxplot() +
   stat_summary(fun=mean, geom="point", size=3)+
