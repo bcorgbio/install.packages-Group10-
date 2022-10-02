@@ -50,7 +50,7 @@ anole.log<-anole2%>%
 ```
 
 ```{r, "PGLS models"}
-### phylogenetic GLS models
+### Phylogenetic GLS models
 
 #PGLS under BM, no ecomorph
 pgls.BM1 <- gls(HTotal ~SVL, correlation = corBrownian(1,phy = anole.tree,form=~Species),data = anole.log, method = "ML")
@@ -71,10 +71,25 @@ anole.phylo.aic <- AICc(pgls.BM1,pgls.BM2,pgls.OU1,pgls.OU2)
 anole.phylow.aicw <- aicw(anole.phylo.aic$AICc)
 ```
 
+```{r, fig.cap="AIC Values of PGLS Models for hindlimb-SVL relationship with Perch Height and Diameter"}
+# Altered AIC Chunk using Kable
+n.spec <- anole.phylo.aic%>%
+  group_by(rownames(anole.phylo.aic))%>%
+  summarize(AIC = AICc)
+n.spec%>%
+  kable(caption = "AIC Values of PGLS Models for hindlimb-SVL relationship with Perch Height and Diameter")
+```
+
 ```{r, "add residuals"}
 #add phylo-corrected residuals
 anole.log <- anole.log%>%
   mutate(phylo.res=residuals(pgls.BM2))
+```
+
+```{r, "Regression Plot of log-transformed HTotal vs SVL with points colored according to Ecomorph2"}
+# Figure of Regression Plot of log-transformed HTotal vs. SVL
+anole.log%>%
+  ggplot(aes(HTotal,SVL,col=Ecomorph2))+geom_point()+geom_smooth(method="lm")
 ```
 
 ```{r,"plot residuals", fig.cap="Boxplot of phylogenetically corrected hindlimb residuals versus anole ecomorph"}
@@ -89,9 +104,9 @@ print(p.eco.phylo)
 
 # Author Contributions
 
-Jack Kloster: YAML header, Introduction, Centered *Anolis* Image, Code Chunks
+Jack Kloster: YAML header, Introduction, Centered *Anolis* Image, Given Code Chunks
 
-Alexa Lombardi: YAML header, Introduction, Methods, Hagey Citation, Phylogenetic Tree Citation
+Alexa Lombardi: YAML header, Introduction, Methods, AIC Chunk, Regression Chunk, Hagey Citation, Phylogenetic Tree Citation
 
 Christopher Peters: Edits and Revisions
 
@@ -99,23 +114,3 @@ Christopher Peters: Edits and Revisions
 
 Hagey, Travis J, Scott Harte, Mathew Vickers, Luke J Harmon, and Lin Schwarzkopf. 2017.“There’s More Than One Way to Climb a Tree: Limb Length and Microhabitat Use in Lizards with Toe Pads.” PloS One 12 (9): e0184641.
 Poe, Steven, Adrian Nieto-Montes de Oca, Omar Torres-Carvajal, Kevin De Queiroz, Julián A Velasco, Brad Truett, Levi N Gray, et al. 2017. “A Phylogenetic, Biogeographic, and Taxonomic Study of All Extant Species of Anolis (Squamata; Iguanidae).” Systematic Biology 66 (5): 663–97.
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
