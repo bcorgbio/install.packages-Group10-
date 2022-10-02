@@ -1,0 +1,121 @@
+---
+title: "Project 4"
+author: "install.packages(Group10)"
+date: "2022-10-02"
+output: html_document
+bibliography: BIOL3140.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,include=FALSE}
+library(tidyverse) #always
+library(ape) #for evo analysis
+library(nlme) #ditto
+library(MuMIn) #for AIC
+library(geiger) #for eco analysis
+library(knitr) #for knitting options
+```
+
+# Introduction
+
+The central theme of this project was to assess the morphological and allometric differences between ecomorphs [@hagey2017there], specifically their hindlimb lengths, within the genus *Anolis*.  Modules 3 and 4 were gateways to the basic functions encompassed in `tidyverse` and gave us practical and real-world application of functions on a minimized scale. We used a phylogenetic tree of various species of anole lizards in our analysis [@poe2017phylogenetic] in addition to our other data [@hagey2017there], and through our analysis, determined that the relationship between hind limb length is phylogenetic, not allometric.
+
+<center>
+[![An anolis lizard](https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Anole_-_Dactyloidae.jpg/1600px-Anole_-_Dactyloidae.jpg?20140330214250)
+</center>
+
+# Methods 
+
+We began by log transforming our data to yield two linear models which presented the relationship between the effect of perch height and diameter on hindlimb length coming from @hagey2017there  We calculated the residuals of these linear plots and plotted them to determine the effects of perch height and diameter on the relationship between hindlimb-SVL.  We were provided with the phylogenetic tree of 46 anole species from @poe2017phylogenetic and utilized this resource.  Our group worked together to develop least squares regression models of the hindlimb-SVL relationship with perch height, diameter, and height and diameter.  We determined the relative fit of each model using AICc and AICw, which allowed us to determine which factors had a predictable effect on hindlimb length.  Finally, we used the best fitting PGLS model to visualize the effects of perch height, diameter, and ecomorph on the various residuals. 
+
+# Results
+
+```{r, "load the data"}
+anole <- read_csv("anole.dat.csv")
+anole.eco <- read_csv("anole.eco.csv")
+anole.tree <- read.tree("anole.tre")
+```
+
+```{r, "join, filter, mutate to log"}
+anole2 <- anole%>%
+left_join(anole.eco)%>%
+  filter(!Ecomorph%in%c("U","CH"))%>%
+  na.omit()
+
+anole.log<-anole2%>%
+  mutate_at(c("SVL","HTotal","PH","ArbPD"),log)
+```
+
+```{r, "PGLS models"}
+### phylogenetic GLS models
+
+#PGLS under BM, no ecomorph
+pgls.BM1 <- gls(HTotal ~SVL, correlation = corBrownian(1,phy = anole.tree,form=~Species),data = anole.log, method = "ML")
+
+#PGLS under BM, w ecomorph
+pgls.BM2 <- gls(HTotal ~SVL * Ecomorph2, correlation = corBrownian(1,phy = anole.tree,form=~Species),data = anole.log, method = "ML")
+
+#PGLS under OU, no ecomorph
+pgls.OU1 <- gls(HTotal ~SVL, correlation = corMartins(0,phy = anole.tree,form=~Species),data = anole.log, method = "ML")
+
+#PGLS under OU, w, ecomorph
+pgls.OU2 <- gls(HTotal ~SVL * Ecomorph2, correlation = corMartins(0,phy = anole.tree,form=~Species),data = anole.log, method = "ML")
+```
+
+```{r, "AIC"}
+#AIC operations
+anole.phylo.aic <- AICc(pgls.BM1,pgls.BM2,pgls.OU1,pgls.OU2)
+anole.phylow.aicw <- aicw(anole.phylo.aic$AICc)
+```
+
+```{r, "add residuals"}
+#add phylo-corrected residuals
+anole.log <- anole.log%>%
+  mutate(phylo.res=residuals(pgls.BM2))
+```
+
+```{r,"plot residuals", fig.cap="Boxplot of phylogenetically corrected hindlimb residuals versus anole ecomorph"}
+#plot residuals
+p.eco.phylo <- anole.log%>%
+ggplot(aes(x=Ecomorph2,y=phylo.res)) +geom_boxplot() +stat_summary(fun=mean, geom="point", size=3)
+print(p.eco.phylo)
+
+```
+
+# Discussion
+
+# Author Contributions
+
+Jack Kloster: YAML header, Introduction, Centered *Anolis* Image, Code Chunks
+
+Alexa Lombardi: YAML header, Introduction, Methods, Hagey Citation, Phylogenetic Tree Citation
+
+Christopher Peters: Edits and Revisions
+
+# References
+
+Hagey, Travis J, Scott Harte, Mathew Vickers, Luke J Harmon, and Lin Schwarzkopf. 2017.“There’s More Than One Way to Climb a Tree: Limb Length and Microhabitat Use in Lizards with Toe Pads.” PloS One 12 (9): e0184641.
+Poe, Steven, Adrian Nieto-Montes de Oca, Omar Torres-Carvajal, Kevin De Queiroz, Julián A Velasco, Brad Truett, Levi N Gray, et al. 2017. “A Phylogenetic, Biogeographic, and Taxonomic Study of All Extant Species of Anolis (Squamata; Iguanidae).” Systematic Biology 66 (5): 663–97.
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
