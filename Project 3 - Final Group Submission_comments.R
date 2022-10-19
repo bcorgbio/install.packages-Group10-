@@ -105,4 +105,4 @@ anole.log%>%
   stat_summary(fun=mean, geom="point", size=3)+
   facet_grid(name~.,scales = "free_y") + ylab("residual")
 
-#CPK: Excellent work! Some nice coding that produces some interesting analysis and pleasing/explantory figures. Well done! 15/15
+#CPK: Excellent work! Some nice coding that produces some interesting analysis and pleasing/explantory figures. Well done! 15/15 
